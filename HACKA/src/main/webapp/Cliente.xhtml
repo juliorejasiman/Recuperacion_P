@@ -1,0 +1,151 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+    <h:head>
+        <title>Listado de Clientes</title>
+        <!--<f:event listener="#{ClienteC.listadoCliente}" type="preRenderView" />-->
+    </h:head>
+    <h:body>     
+        <h:form>
+        <p:menubar>
+        <p:menuitem    value="CLIENTE" outcome="Cliente" />
+        
+        <p:menuitem  value="VENTA" outcome="Venta"/>
+       
+    </p:menubar>
+             </h:form>
+        <p:growl id="mensaje" showDetail="true" />
+        <p:growl id="growl-sticky" for="sticky-key" showDetail="true" sticky="true" />
+
+        <h:form id="form">
+            <!--nom_cli ape_cli  dni_cli  cel_cli dir_cli  cod_ubi-->
+
+            <!--        Formulario del Cliente    >-->         
+
+            <p:panelGrid columns="2">
+                <p:outputLabel value="DNI" for="form" /> 
+                <p:inputText id="form"  maxlength="8" placeholder="Escribe aqui"  value="#{ClienteC.cli.DNICLI}" 
+                             required="true" requiredMessage="Requiere DNI" >
+                    <p:keyFilter regEx="/[0-9]/" />
+                    
+                </p:inputText>
+                <p:outputLabel value="Nombre" for="form"/> 
+                <p:inputText maxlength="50" placeholder="Escribe aqui" value="#{ClienteC.cli.NOMCLI}" 
+                             required="true" requiredMessage="Requiere Nombre">
+                    <p:keyFilter regEx="/[A-Z_a-z_ñ_á_é_í_ó_ú_ ]/"/>
+                </p:inputText>
+                <p:outputLabel value="Celular" /> <p:inputText maxlength="9" placeholder="Escribe aqui" value="#{ClienteC.cli.CELCLI}" 
+                               required="true" requiredMessage="Requiere Celular">
+                    <p:keyFilter regEx="/[0-9]/" />
+                </p:inputText>
+                <p:outputLabel value="Apellidos" /> <p:inputText maxlength="60" placeholder="Escribe aqui" value="#{ClienteC.cli.APECLI}" 
+                               required="true" requiredMessage="Requiere Apellidos">
+                    <p:keyFilter regEx="/[A-Z_a-z_ñ_á_é_í_ó_ú_ ]/"/>
+                </p:inputText>
+                <p:outputLabel value="Direccion" /> <p:inputText maxlength="60" placeholder="Escribe aqui"  value="#{ClienteC.cli.DIRCLI}"  
+                               required="true" requiredMessage="Requiere Dirección">
+                    <p:keyFilter regEx="/[A-Z_a-z_ñ_á_é_í_ó_ú__0-9_:_ _@]/"/>
+                </p:inputText>
+     
+                    
+                <p:commandButton value="Registrar" actionListener="#{ClienteC.registrar()}" update="tablaCli mensaje"/>
+                <p:commandButton value="Listar" actionListener="#{ClienteC.listar()}" update="tablaCli" />
+            </p:panelGrid>
+ <h:form>
+            
+         
+        </h:form>
+            <!--  Listado del Clientes -->
+
+            <p:dataTable var="tblcli" id="tablaCli" value="#{ClienteC.listadoCliente}" rows="10"
+                         paginator="true"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                         rowsPerPageTemplate="5,10,{ShowAll|'All'}" >
+                <p:column headerText="DNI">
+                    <h:outputText value="#{tblcli.DNICLI}" />
+                </p:column>
+                <p:column headerText="NOMBRE">
+                    <h:outputText value="#{tblcli.NOMCLI}" />
+                </p:column>
+
+                <p:column headerText="CELULAR">
+                    <h:outputText value="#{tblcli.CELCLI}" />
+                </p:column>
+
+                <p:column headerText="APELLIDOS">
+                    <h:outputText value="#{tblcli.APECLI}" />
+                </p:column>
+
+                <p:column headerText="Direccion">
+                    <h:outputText value="#{tblcli.DIRCLI}" />
+                </p:column>
+
+                <p:column headerText="Modificar">
+                    <p:commandButton oncomplete="PF('wdlgDatos').show();" value="Modificar" update=":dlgDatos">
+                        <f:setPropertyActionListener value="#{tblcli}" target="#{ClienteC.cli}" />
+                    </p:commandButton>
+                </p:column> 
+                <p:column headerText="Eliminar">
+                    <p:commandButton value="E" icon="ui_icon_trash" actionListener="#{ClienteC.eliminar(tblCli)}" update="tablaCli">
+                        <p:confirm header="Confirmación" message="¿Deseas eliminar?" icon="ui_icon_trash"/>
+                    </p:commandButton>
+                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                        <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times" />
+                    </p:confirmDialog> 
+                </p:column>
+
+                <f:facet name="footer">
+                    EN TOTAL HAY #{fn:length(ClienteC.listadoCliente)} REGISTROS.
+                </f:facet>
+            </p:dataTable>
+
+        </h:form>
+
+
+        <!--  Listado del Cliente -->
+
+
+       <p:dialog header="Datos del Cliente" widgetVar="wdlgDatos" id="dlgDatos">
+            <h:form> 
+                <p:panelGrid columns="2">
+                    <p:outputLabel value="DNI" /> <p:inputText value="#{ClienteC.cli.DNICLI}" maxlength="8" >
+                        <p:keyFilter regEx="/[0-9]/" />
+                    </p:inputText> 
+                    <p:outputLabel value="Nombre" /> <p:inputText value="#{ClienteC.cli.NOMCLI}" maxlength="50">
+                        <p:keyFilter regEx="/[A-Z_a-z_ñ_á_é_í_ó_ú_ ]/"/>
+                    </p:inputText>
+                    <p:outputLabel value="Celular" /> <p:inputText value="#{ClienteC.cli.CELCLI}" maxlength="9" >
+                        <p:keyFilter regEx="/[0-9]/" />
+                    </p:inputText>
+                    <p:outputLabel value="Apellidos" /> <p:inputText value="#{ClienteC.cli.APECLI}" maxlength="60" >
+                        <p:keyFilter regEx="/[A-Z_a-z_ñ_á_é_í_ó_ú_ ]/"/>
+                    </p:inputText>
+                    <p:outputLabel value="Direccion" /> <p:inputText value="#{ClienteC.cli.DIRCLI}" maxlength="60" >
+                        <p:keyFilter regEx="/[A-Z_a-z_ñ_á_é_í_ó_ú__0-9_:_ _@]/"/>
+                    </p:inputText>
+                    <p:outputLabel value="Ubigeo" /> <p:inputText value="#{DestinoC.dest.CODDEST}" maxlength="6" >
+                        <p:keyFilter regEx="/[0-9]/" />
+                    </p:inputText>
+
+                    <p:commandButton value="Cancelar" immediate="true" oncomplete="PF('wdlgDatos').hide();" />
+
+                    <p:commandButton value="Modificar" actionListener="#{ClienteC.modificar()}" 
+                                     update=":form:tablaCli" oncomplete="PF('wdlgDatos').hide();" >
+                        <p:confirm header="Confirmación" message="¿Deseas Modificar?" icon="ui-icon-alert"/>
+                        <p:tooltip trackMouse="true"/>
+                    </p:commandButton>
+                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                        <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>
+                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close"/>
+                    </p:confirmDialog>
+                </p:panelGrid>
+            </h:form>
+        </p:dialog>
+
+    </h:body>
+</html>

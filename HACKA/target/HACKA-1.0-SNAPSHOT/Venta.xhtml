@@ -1,0 +1,102 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui= "http://java.sun.com/jsf/composite" 
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions"> 
+    <h:head>
+        <title> Listado de Venta</title>
+        <!--<f:event listener="#{VentaDetalleC.listadoVede}" type="preRenderView" />-->
+    </h:head>
+   <h:form>
+        <p:menubar>
+        <p:menuitem  value="CLIENTE" outcome="Cliente" />       
+        <p:menuitem  value="VENTA" outcome="Venta"/>
+  
+    </p:menubar>
+    </h:form>
+    
+    <h:body>      
+        
+        <h:form id="frmVeDe">
+            <p:panelGrid columns="2" style="margin: 0 auto; ">
+                <p:outputLabel value="Cliente" for="cli"/>
+                <p:selectOneMenu title="Seleccionar Cliente" id="cli" value="#{VentaDetalleC.ventaDetalle.cliente.DNICLI}" style="width:360px" 
+                                 filter="true" filterMatchMode="contains" required="true" requiredMessage="Requiere Cliente" >
+                    <f:selectItem noSelectionOption="true" itemLabel="Seleccione" itemValue="#{null}"/>
+                    <f:selectItems value="#{ClienteC.listadoCliente}" var="cliente"
+                                   itemValue="#{cliente.DNICLI}" 
+                                   itemLabel="#{cliente.NOMCLI}  
+                                   #{cliente.APECLI}"/>
+                </p:selectOneMenu>
+                <p:outputLabel  value="Producto" for="pro"/>
+                <p:selectOneMenu title="Seleccionar Producto" id="pro" value="#{VentaDetalleC.ventaDetalle.producto.CODPIZ}" style="width:360px" 
+                                 filter="true" filterMatchMode="contains" required="true" requiredMessage="Requiere Cliente" >
+                    <f:selectItem noSelectionOption="true" itemLabel="Seleccione" itemValue="#{null}"/>
+                    <f:selectItems value="#{ProductoC.listadoProductos}" var="producto"
+                                   itemValue="#{producto.CODPIZ}" 
+                                   itemLabel="#{producto.NOMPIZ} " 
+                                   />
+                </p:selectOneMenu>
+                <p:outputLabel  value="Cantidad *"/>
+                <p:inputText title="Ingresar Cant. de Productos" placeholder="Escribe aquí" id="cantidad" value="#{VentaDetalleC.ventaDetalle.CANPROVENT}" 
+                             required="true" requiredMessage="Falta Cantidad" maxlength="30" style="width: 360px">
+                    <p:keyFilter regEx="/[0-9]/" />
+                </p:inputText>
+
+            </p:panelGrid>
+            <p:commandButton title="Agregar Detalles de Venta" value="Agregar" actionListener="#{VentaDetalleC.obtener()}" 
+                             update="frmVeDe,:frmVentaDetalle"  icon="ui-icon-plus" />
+            
+
+        </h:form>
+        
+        <h:form id="frmVentaDetalle">
+            <p:dataTable var="vede" id="tablaVentaDetalle" value="#{VentaDetalleC.listadoVede}"
+                         rows="5" paginator="true" 
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                         rowsPerPageTemplate="5,10,15,20">
+
+                  <p:column headerText="CLIENTE">
+                      <h:outputText value="#{vede.cliente.NOMCLI}"/>
+                </p:column>          
+                <p:column headerText="Producto">
+                    <h:outputText value="#{vede.producto.CODPIZ}"/>
+                </p:column>
+                  <p:column headerText="Nombre del prodcuto">
+                      <h:outputText value="#{vede.producto.NOMPIZ}"/>
+                </p:column>
+                  <p:column headerText="Precio de producto">
+                      <h:outputText value="#{vede.producto.PREPPIZ}"/>
+                </p:column>
+                <p:column headerText="CANTIDAD">
+                    <h:outputText value="#{vede.CANPROVENT}"/>
+                </p:column>
+                <p:column headerText="Stock">
+                    <h:outputText value="#{vede.producto.STOPIZ}">
+                      
+                 <p:column headerText="Tipo de producto">
+                     <h:outputText value="#{producto.TIPPIZ}"/>
+                </p:column>
+                <p:column headerText="CANTIDAD">
+                    <h:outputText value="#{vede.CANPROVENT}"/>
+                </p:column>
+                         <p:column headerText="Vendedor">
+                             <h:outputText value="#{vede.vendedor}"/>
+          
+                </p:column>
+                         <p:column headerText="Direecion">
+                             <h:outputText value="#{vede.destino}"/>
+                </p:column>
+                        <f:convertNumber type="currency" currencySymbol="S/. " minFractionDigits="2"/>
+                    </h:outputText>
+                </p:column>         
+                
+            </p:dataTable>
+           
+        </h:form>
+        
+    </h:body>  
+    
+</html>
